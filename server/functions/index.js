@@ -1,33 +1,18 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin')
-
+const Hospital = require('./Hospital')
 admin.initializeApp()
 
 exports.fetchHospitals = functions.https.onRequest((req, res) => {
     admin.firestore().collection("hospitals").get().then(data => {
         let hospitals = []
         data.forEach(hospital => {
+            const id = hospital.id
             hospital = hospital.data()
-            let tempHospitalData = {
-                id: hospital._id,
-                name: hospital.name,
-                covid: hospital.covid,
-                noncovid: hospital.noncovid,
-                websiteUrl: hospital.websiteUrl,
-                government: hospital.government,
-                covidtesting: hospital.covidtesting,
-                numberOfCovidBeds: hospital.numberOfCovidBeds,
-                numberOfCovidBedsOccupied: hospital.numberOfCovidBedsOccupied,
-                numberOfICUBeds: hospital.numberOfICUBeds,
-                numberOfICUBedsOccupied: hospital.numberOfICUBedsOccupied,
-                numberOfNonCovidBeds: hospital.numberOfNonCovidBeds,
-                numberOfNonCovidBedsOccupied: hospital.numberOfNonCovidBedsOccupied,
-                phoneNo: hospital.phoneNo,
-                locationCity: hospital.locationCity,
-                location: hospital.location,
-                underReview: hospital.underReview
-            }
-            hospitals.push(tempHospitalData)
+            const hospitalObject = new Hospital(id,hospital)
+            let temp = hospitalObject.getHospitalData()
+            temp.id = id
+            hospitals.push(temp)
         })
         return res.json(hospitals)
     }).catch(err => {
@@ -43,27 +28,10 @@ exports.createHospital = functions.https.onRequest((req, res) => {
         return res.status(400)
             .json({ error: "Method not allowed" })
     }
-    let hospitalData = {
-        name: req.body.name,
-        covid: req.body.covid,
-        noncovid: req.body.noncovid,
-        websiteUrl: req.body.websiteUrl,
-        government: req.body.government,
-        covidtesting: req.body.covidtesting,
-        numberOfCovidBeds: req.body.numberOfCovidBeds,
-        numberOfCovidBedsOccupied: req.body.numberOfCovidBedsOccupied,
-        numberOfICUBeds: req.body.numberOfICUBeds,
-        numberOfICUBedsOccupied: req.body.numberOfICUBedsOccupied,
-        numberOfNonCovidBeds: req.body.numberOfNonCovidBeds,
-        numberOfNonCovidBedsOccupied: req.body.numberOfNonCovidBedsOccupied,
-        phoneNo: req.body.phoneNo,
-        locationCity: req.body.locationCity,
-        location: req.body.location,
-        underReview: true
-    }
+    const hospitalData = new Hospital(null, req.body.data)
     admin.firestore()
         .collection('hospitals')
-        .add(hospitalData)
+        .add(hospitalData.getHospitalData())
         .then(hospital => {
             res.json(hospital.id)
         }).catch(err => {
@@ -77,28 +45,11 @@ exports.updateHospital = functions.https.onRequest((req, res) => {
         return res.status(400).json({ error: "Method not allowed" })
     }
     const id = req.body.id;
-    const hospitalData = {
-        name: req.body.name,
-        covid: req.body.covid,
-        noncovid: req.body.noncovid,
-        websiteUrl: req.body.websiteUrl,
-        government: req.body.government,
-        covidtesting: req.body.covidtesting,
-        numberOfCovidBeds: req.body.numberOfCovidBeds,
-        numberOfCovidBedsOccupied: req.body.numberOfCovidBedsOccupied,
-        numberOfICUBeds: req.body.numberOfICUBeds,
-        numberOfICUBedsOccupied: req.body.numberOfICUBedsOccupied,
-        numberOfNonCovidBeds: req.body.numberOfNonCovidBeds,
-        numberOfNonCovidBedsOccupied: req.body.numberOfNonCovidBedsOccupied,
-        phoneNo: req.body.phoneNo,
-        locationCity: req.body.locationCity,
-        location: req.body.location,
-        underReview: true
-    }
+    const hospitalData = new Hospital(id, req.body.data)
     admin.firestore()
         .collection('hospitals')
         .doc(id)
-        .set(hospitalData)
+        .update(hospitalData.getHospitalData())
         .then(value => {
             return res.json(value)
         })
