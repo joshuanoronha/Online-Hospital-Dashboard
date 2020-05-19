@@ -13,7 +13,6 @@ function HospitalCard(props) {
         margin: "1rem",
         marginLeft: "auto",
         marginRight: "auto",
-        color: "#636363",
         fontSize: "0.9rem",
       }}
     >
