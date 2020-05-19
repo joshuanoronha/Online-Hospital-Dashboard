@@ -4,6 +4,9 @@ const Hospital = require('./Hospital')
 admin.initializeApp()
 
 exports.fetchHospitals = functions.https.onRequest((req, res) => {
+    res.set("Access-Control-Allow-Origin", "*"); // you can also whitelist a specific domain like "http://127.0.0.1:4000"
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+
     admin.firestore().collection("hospitals").get().then(data => {
         let hospitals = []
         data.forEach(hospital => {
@@ -28,6 +31,11 @@ exports.createHospital = functions.https.onRequest((req, res) => {
         return res.status(400)
             .json({ error: "Method not allowed" })
     }
+
+    res.set("Access-Control-Allow-Origin", "*"); // you can also whitelist a specific domain like "http://127.0.0.1:4000"
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+
+
     const hospitalData = new Hospital(null, req.body.data)
     admin.firestore()
         .collection('hospitals')
@@ -44,6 +52,10 @@ exports.updateHospital = functions.https.onRequest((req, res) => {
     if (req.method !== 'POST') {
         return res.status(400).json({ error: "Method not allowed" })
     }
+    
+    res.set("Access-Control-Allow-Origin", "*"); // you can also whitelist a specific domain like "http://127.0.0.1:4000"
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+
     const id = req.body.id;
     const hospitalData = new Hospital(id, req.body.data)
     admin.firestore()

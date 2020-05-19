@@ -1,30 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import HospitalCard from './components/HospitalCard';
+import React, { useState } from "react";
+import "./App.css";
+import HospitalCard from "./components/HospitalCard";
+import config from "./config";
+import Dashboard from "./components/Dashboard";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Search from "./components/Search";
+
 function App() {
-  const data = [
-    1,2,3,4,5,5,6,775,858,48,548,9,10
-  ]
+  const [hospitalData, setHospitalData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  React.useEffect(() => {
+    console.log("App state rebuild");
+    fetchHospitals(setHospitalData);
+  }, [searchText]);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      {data.map((object, i) => <HospitalCard  />)}
+      <Dashboard></Dashboard>
+      <Search
+        setSearchText={setSearchText}
+      ></Search>
+      {hospitalData.map((hospital, _) => (
+        <HospitalCard data={hospital} key={hospital.id} />
+      ))}
     </div>
   );
 }
-
+function fetchHospitals(setHospitalData) {
+  fetch(`${config.apiUrl}/fetchHospitals`) // Call the fetch function passing the url of the API as a parameter
+    .then((data) => data.json())
+    .then((data) => {
+      console.log(data);
+      setHospitalData(data);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  setHospitalData([])
+  console.log("fetched data");
+}
 export default App;
