@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Button, InputGroup, FormControl } from "react-bootstrap";
 
 function Search(props) {
@@ -11,8 +11,7 @@ function Search(props) {
             variant="outline-primary"
             onClick={() => {
               const searchText = document.querySelector(".form-control").value;
-              if (props.searchText !== searchText)
-                props.setSearchText(searchText);
+              props.setSearchText(searchText);
             }}
           >
             Search
