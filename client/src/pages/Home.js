@@ -10,7 +10,6 @@ function Home() {
   const [hospitalData, setHospitalData] = useState([]);
   const [searchText, setSearchText] = useState("");
   useEffect(() => {
-    console.log("App state rebuild");
     fetchHospitals(setHospitalData);
   }, [searchText]);
   return (
