@@ -7,7 +7,50 @@ function Register() {
   const [phones, setPhones] = useState([
     <Form.Control type="text" name={`phone.1`} key="1" />,
   ]);
-  useEffect(() => {}, []);
+  const [hospitalDetails, setHospitalDetails] = useState({
+    name: "",
+    covid: false,
+    nonCovid: false,
+    government: false,
+    covidTesting: false,
+    numberOfCovidBeds: 0,
+    numberOfCovidBedsOccupied: 0,
+    numberOfICUBeds: 0,
+    numberOfICUBedsOccupied: 0,
+    numberOfNonCovidBeds: 0,
+    numberOfNonCovidBedsOccupied: 0
+  });
+  function handleNameChange(e) {
+    let temp = { ...hospitalDetails };
+    temp.name = e.target.value;
+    setHospitalDetails(temp);
+  }
+  function handleCovidChange(e) {
+    let temp = { ...hospitalDetails };
+    temp.covid = e.target.checked;
+    setHospitalDetails(temp);
+  }
+  function handleNonCovidChange(e) {
+    let temp = { ...hospitalDetails };
+    temp.nonCovid = e.target.checked;
+    setHospitalDetails(temp);
+  }
+  function handleGovernmentChange(e) {
+    let temp = { ...hospitalDetails };
+    const government = e.target.value === "government";
+    temp.government = government;
+    setHospitalDetails(temp);
+  }
+  function handleCovidTestingChange(e){
+    let temp = { ...hospitalDetails };
+    const covidTesting = e.target.value === "available";
+    temp.covidTesting = covidTesting;
+    setHospitalDetails(temp);
+  }
+  function onHospitalSubmit(e) {
+    console.log(hospitalDetails);
+    e.preventDefault();
+  }
   return (
     <>
       <Container
@@ -18,13 +61,17 @@ function Register() {
         }}
       >
         <h1>Register</h1>
-        <Form style={{ textAlign: "left" }}>
+        <Form style={{ textAlign: "left" }} onSubmit={onHospitalSubmit}>
           <Form.Group as={Row} controlId="formHospitalName">
             <Form.Label column sm={3}>
               Hospital Name
             </Form.Label>
             <Col sm={9}>
-              <Form.Control type="text" placeholder="Hospital Name" />
+              <Form.Control
+                type="text"
+                placeholder="Hospital Name"
+                onChange={handleNameChange}
+              />
             </Col>
           </Form.Group>
 
@@ -33,8 +80,16 @@ function Register() {
               Hospital Type
             </Form.Label>
             <Col sm={9}>
-              <Form.Check label="Covid Hospital" name="covid" />
-              <Form.Check label="Non Covid Hospital" name="nonCovid" />
+              <Form.Check
+                label="Covid Hospital"
+                name="covid"
+                onChange={handleCovidChange}
+              />
+              <Form.Check
+                label="Non Covid Hospital"
+                name="nonCovid"
+                onChange={handleNonCovidChange}
+              />
             </Col>
           </Form.Group>
 
@@ -43,8 +98,20 @@ function Register() {
               Hospital Facilities
             </Form.Label>
             <Col sm={9}>
-              <Form.Check type="radio" label="Government" name="government" />
-              <Form.Check type="radio" label="Private" name="government" />
+              <Form.Check
+                type="radio"
+                label="Government"
+                name="government"
+                value="government"
+                onChange={handleGovernmentChange}
+              />
+              <Form.Check
+                type="radio"
+                label="Private"
+                name="government"
+                value="private"
+                onChange={handleGovernmentChange}
+              />
             </Col>
           </Form.Group>
 
@@ -53,11 +120,19 @@ function Register() {
               Covid Testing
             </Form.Label>
             <Col sm={9}>
-              <Form.Check type="radio" label="Available" name="covidtesting" />
+              <Form.Check
+                type="radio"
+                label="Available"
+                value="available"
+                name="covidtesting"
+                onChange={handleCovidTestingChange}
+              />
               <Form.Check
                 type="radio"
                 label="Unavailable"
+                value="unavailable"
                 name="covidtesting"
+                onChange={handleCovidTestingChange}
               />
             </Col>
           </Form.Group>
@@ -232,7 +307,7 @@ function Register() {
           </Form.Group>
           <Form.Group as={Row}>
             <Col sm={{ span: 10, offset: 2 }}>
-              <Button type="submit">Sign in</Button>
+              <Button type="submit">Register Hospital</Button>
             </Col>
           </Form.Group>
         </Form>
